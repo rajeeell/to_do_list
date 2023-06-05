@@ -1,84 +1,120 @@
+// import a package that provides widgets and tools for building Flutter apps
 import 'package:flutter/material.dart';
 
+// import a custom package that defines a stateful widget class named CheckableTodoItem
 import 'package:flutter_internals/keys/checkable_todo_item.dart';
+// import another custom package that defines a constant class named TodoItem
 // import 'package:flutter_internals/keys/todo_item.dart';
 
+// define a constant class named Todo that represents a todo item
 class Todo {
-  const Todo(this.text, this.priority);
+ // use a const constructor to initialize the text and priority properties
+ const Todo(this.text, this.priority);
 
-  final String text;
-  final Priority priority;
+ // declare a final string property named text that holds the todo text
+ final String text;
+ // declare a final Priority property named priority that holds the todo priority
+ final Priority priority;
 }
 
+// define a stateful widget class named Keys
 class Keys extends StatefulWidget {
-  const Keys({super.key});
+ // use a named parameter to initialize the key property of the superclass
+ const Keys({super.key});
 
-  @override
-  State<Keys> createState() {
-    return _KeysState();
-  }
+ // override the createState method to return an instance of _KeysState
+ @override
+ State<Keys> createState() {
+  return _KeysState();
+ }
 }
 
+// define a state class named _KeysState that extends the state of Keys
 class _KeysState extends State<Keys> {
-  var _order = 'asc';
-  final _todos = [
-    const Todo(
-      'Learn Flutter',
-      Priority.urgent,
-    ),
-    const Todo(
-      'Practice Flutter',
-      Priority.normal,
-    ),
-    const Todo(
-      'Explore other courses',
-      Priority.low,
-    ),
-  ];
+ // declare a string variable named _order and initialize it to 'asc'
+ var _order = 'asc';
+ // declare a final list of Todo constants named _todos and initialize it with some values
+ final _todos = [
+  const Todo(
+   'Learn Flutter',
+   Priority.urgent,
+  ),
+  const Todo(
+   'Practice Flutter',
+   Priority.normal,
+  ),
+  const Todo(
+   'Explore other courses',
+   Priority.low,
+  ),
+ ];
 
-  List<Todo> get _orderedTodos {
-    final sortedTodos = List.of(_todos);
-    sortedTodos.sort((a, b) {
-      final bComesAfterA = a.text.compareTo(b.text);
-      return _order == 'asc' ? bComesAfterA : -bComesAfterA;
-    });
-    return sortedTodos;
-  }
+ // define a getter method named _orderedTodos that returns a sorted list of todos based on the _order value
+ List<Todo> get _orderedTodos {
+  // create a copy of the _todos list and store it in a variable named sortedTodos
+  final sortedTodos = List.of(_todos);
+  // sort the sortedTodos list by comparing the text property of each todo item
+  sortedTodos.sort((a, b) {
+   // store the result of comparing the text property of two todo items in a variable named bComesAfterA
+   final bComesAfterA = a.text.compareTo(b.text);
+   // return the result based on the _order value
+   return _order == 'asc' ? bComesAfterA : -bComesAfterA;
+  });
+  // return the sortedTodos list
+  return sortedTodos;
+ }
 
-  void _changeOrder() {
-    setState(() {
-      _order = _order == 'asc' ? 'desc' : 'asc';
-    });
-  }
+ // define a method named _changeOrder that updates the state when called
+ void _changeOrder() {
+  // call the setState method to notify Flutter that the state has changed and trigger a rebuild
+  setState(() {
+   // toggle the _order value between 'asc' and 'desc'
+   _order = _order == 'asc' ? 'desc' : 'asc';
+  });
+ }
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
+ // override the build method to return a widget tree
+ @override
+ Widget build(BuildContext context) {
+  // return a Column widget that arranges its children vertically
+  return Column(
+   // set the children property to a list of widgets
+   children: [
+    // add an Align widget that aligns its child at the right center of its parent
+    Align(
+     alignment: Alignment.centerRight,
+     // set the child property to a TextButton.icon widget that displays an icon and some text and responds to taps
+     child: TextButton.icon(
+      // set the onPressed property to the _changeOrder method that updates the state when the button is tapped
+      onPressed: _changeOrder,
+      // set the icon property to an Icon widget that displays an arrow icon based on the _order value
+      icon: Icon(
+       _order == 'asc' ? Icons.arrow_downward : Icons.arrow_upward,
+      ),
+      // set the label property to a Text widget that displays some text based on the _order value
+      label: Text('Sort ${_order == 'asc' ? 'Descending' : 'Ascending'}'),
+     ),
+    ),
+    // add an Expanded widget that expands its child to fill the available space in its parent
+    Expanded(
+     // set the child property to a Column widget that arranges its children vertically
+     child: Column(
+      // set the children property to a list of widgets generated by iterating over each todo item in the ordered list
       children: [
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton.icon(
-            onPressed: _changeOrder,
-            icon: Icon(
-              _order == 'asc' ? Icons.arrow_downward : Icons.arrow_upward,
-            ),
-            label: Text('Sort ${_order == 'asc' ? 'Descending' : 'Ascending'}'),
-          ),
-        ),
-        Expanded(
-          child: Column(
-            children: [
-              // for (final todo in _orderedTodos) TodoItem(todo.text, todo.priority),
-              for (final todo in _orderedTodos)
-                CheckableTodoItem(
-                  key: ObjectKey(todo), // ValueKey()
-                  todo.text,
-                  todo.priority,
-                ),
-            ],
-          ),
+       // for each todo item in the _orderedTodos list, add a CheckableTodoItem widget that displays the todo text and priority and responds to taps
+       for (final todo in _orderedTodos)
+        CheckableTodoItem(
+         // set the key property to an ObjectKey widget that assigns a unique key to each todo item based on its value
+         key: ObjectKey(todo), // ValueKey()
+         // set the text property to the todo text
+         todo.text,
+         // set the priority property to the todo priority
+         todo.priority,
         ),
       ],
-    );
-  }
+     ),
+    ),
+   ],
+  );
+ }
 }
